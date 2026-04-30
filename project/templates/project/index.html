@@ -6,4 +6,9 @@ Welcome to the unsafe website!
     <button type="submit">Log in</button>
 </form>
 
+{% if error %}
+{{ error }}
+{% endif %}
+
+
 <a href="/register/">new user</a>

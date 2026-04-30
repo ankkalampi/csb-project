@@ -20,11 +20,11 @@ def index(request):
         try:
             user = User.objects.get(username=username)
 
-            # FIXES AUTHENTICATION FAILURE (FLAW 2)
+            # FIXES AUTHENTICATION FAILURE (FLAW 1)
             """
             if not user.check_password(password):
-                
-                return render(request, "project/index.html")
+                error = "wrong password"
+                return render(request, "project/index.html" , {"error": error})
             """
 
             request.session['username'] = user.username
@@ -40,7 +40,7 @@ def logout_view(request):
     request.session.flush()
     return redirect('/')
 
-# FIXES CSRF VULNERABILITY (FLAW 1)
+# FIXES CSRF VULNERABILITY (FLAW 2)
 @csrf_exempt
 def alter_secret(request):
     username = request.POST.get("username")
@@ -108,10 +108,10 @@ def user_view(request, username):
     secret = row[0][0]
 
     # FIXES SQL INJECTION (FLAW 5)
-    """
+    
     profile = get_object_or_404(Profile, user=user)
     secret = profile.secret
-    """
+    
 
 
     

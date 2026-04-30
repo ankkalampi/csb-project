@@ -5,13 +5,9 @@
     <body>
         Welcome, {{ user.username }}
 
+    
         <br />
-
-        <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit">Log out</button>
-        </form>
-
+        <a href="/logout">log out</a>
     </body>
 
 </html>

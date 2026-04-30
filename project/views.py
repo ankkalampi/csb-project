@@ -40,7 +40,7 @@ def logout_view(request):
     request.session.flush()
     return redirect('/')
 
-# FIXES CSRF VULNERABILITY (FLAW 2)
+# FIXES CSRF VULNERABILITY (when commented out) (FLAW 2)
 @csrf_exempt
 def alter_secret(request):
     username = request.POST.get("username")
@@ -108,10 +108,10 @@ def user_view(request, username):
     secret = row[0][0]
 
     # FIXES SQL INJECTION (FLAW 5)
-    
+    """
     profile = get_object_or_404(Profile, user=user)
     secret = profile.secret
-    
+    """
 
 
     

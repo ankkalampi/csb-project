@@ -1,0 +1,6 @@
+Welcome to the unsafe website!
+<form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log in</button>
+</form>

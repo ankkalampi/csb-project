@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    Create a new user
+    <form method="POST" action="/register/">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username">
+        <br />
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password">
+         <br />
+        <label for="secret">Secret:</label>
+        <input type="text" name="secret" id="secret">
+         <br />
+        <button type="submit">Register user</button>
+    </form>
+
+    {% if error %}
+    {{ error }}
+    {% endif %}
+
+    <a href="/">Back to main page</a>
+</html>

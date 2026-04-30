@@ -11,8 +11,7 @@ from django.contrib.auth import views as auth_views
 from django.views.decorators.csrf import csrf_exempt
 from project.models import Profile
 
-# FIXES CSRF VULNERABILITY
-# @csrf_exempt
+
 def index(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -21,7 +20,7 @@ def index(request):
         try:
             user = User.objects.get(username=username)
 
-            # FIXES AUTHENTICATION FAILURE
+            # FIXES AUTHENTICATION FAILURE (FLAW 2)
             """
             if not user.check_password(password):
                 
@@ -41,9 +40,24 @@ def logout_view(request):
     request.session.flush()
     return redirect('/')
 
+# FIXES CSRF VULNERABILITY (FLAW 1)
+@csrf_exempt
+def alter_secret(request):
+    username = request.POST.get("username")
+    user = get_object_or_404(User, username=username)
+    profile = get_object_or_404(Profile, user=user)
+
+    if request.method == "POST":
+        new_secret = request.POST.get("secret")
+
+        profile.secret = new_secret
+        profile.save()
+
+        return redirect(f"/{username}")
+
 def busted_view(request):
 
-    # FIXES LOGGING AND MONITORING FAILURES
+    # FIXES LOGGING AND MONITORING FAILURES (FLAW 3)
     """
     return render(request, 'project/not_permitted.html')
     """
@@ -73,11 +87,13 @@ def register(request):
 
 def user_view(request, username):
 
-    # FIXES BROKEN ACCESS CONTROL
+    # FIXES BROKEN ACCESS CONTROL (FLAW 4)
     """
     if request.session.get('username') != username:
         return redirect('/busted/')
     """
+
+    
 
     user = get_object_or_404(User, username=username)
 
@@ -90,6 +106,12 @@ def user_view(request, username):
         row = cursor.fetchall()
 
     secret = row[0][0]
+
+    # FIXES SQL INJECTION (FLAW 5)
+    """
+    profile = get_object_or_404(Profile, user=user)
+    secret = profile.secret
+    """
 
 
     

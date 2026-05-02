@@ -97,6 +97,8 @@ def user_view(request, username):
 
     user = get_object_or_404(User, username=username)
 
+    # REMEBER TO REMOVE THIS AS WELL TO FIX FLAW 5
+    # START REMOVING ->
     with connection.cursor() as cursor:
         cursor.execute(f"""
                        SELECT secret 
@@ -106,6 +108,8 @@ def user_view(request, username):
         row = cursor.fetchall()
 
     secret = row[0][0]
+    # REMOVE UNTIL HERE <-
+
 
     # FIXES SQL INJECTION (FLAW 5)
     """

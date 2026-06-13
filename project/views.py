@@ -8,6 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import views as auth_views
+from django.contrib.auth import login
 from django.views.decorators.csrf import csrf_exempt
 from project.models import Profile
 
@@ -27,7 +28,7 @@ def index(request):
                 return render(request, "project/index.html" , {"error": error})
             """
 
-            request.session['username'] = user.username
+            login(request, user)
             return redirect(f'/{user.username}')
                 
 
@@ -89,7 +90,7 @@ def user_view(request, username):
 
     # FIXES BROKEN ACCESS CONTROL (FLAW 4)
     """
-    if request.session.get('username') != username:
+    if request.user.username != username:
         return redirect('/busted/')
     """
 

@@ -12,6 +12,10 @@ from django.contrib.auth import login
 from django.views.decorators.csrf import csrf_exempt
 from project.models import Profile
 
+import traceback
+import sys
+from django.conf import settings
+
 
 def index(request):
     if request.method == "POST":
@@ -58,15 +62,41 @@ def alter_secret(request):
 
 def busted_view(request):
 
-    # FIXES LOGGING AND MONITORING FAILURES (FLAW 3)
+    # FIXES SECURITY MISCONFIGURATION (FLAW 3)
     """
     return render(request, 'project/not_permitted.html')
     """
 
+    try:
+        raise Exception("Access denied")
+    except Exception:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        stack_trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
+
+    formatted_stack_trace = "\n".join(stack_trace)
+
+    modules = "\n".join(sys.modules.keys())
+
+    settings_info = "\n".join([f"{k}: {getattr(settings, k)}" for k in dir(settings) if not k.startswith('_')])
+
+    middleware = "\n".join(settings.MIDDLEWARE)
+
     return HttpResponse(f"""
                         ACCESS BLOCKED
-                        
-                        Session meta: {dict(request.META)}
+                        </br>
+                        If access should be granted, review debug information:</br>
+                        ------------------------------------------------------</br>
+                        Stack trace:</br>
+                        <pre>{formatted_stack_trace}</pre></br>
+                        ------------------------------------------------------</br>
+                        Loaded modules:</br>
+                        <pre>{modules}</pre></br>
+                        ------------------------------------------------------</br>
+                        Django settings:</br>
+                        <pre>{settings_info}</pre></br>
+                        ------------------------------------------------------</br>
+                        Used middleware:</br>
+                        <pre>{middleware}</pre></br>
                         """)
 
 def register(request):
